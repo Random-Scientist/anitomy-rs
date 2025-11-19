@@ -84,7 +84,7 @@ pub(crate) fn get_pair_mut<T>(slice: &mut [T], i: usize, j: usize) -> Option<(&m
         None
     } else {
         let (left, right) = slice.split_at_mut(j);
-        Some((&mut left[i], &mut right[0]))
+        Some((&mut left[i], right.first_mut()?))
     }
 }
 
@@ -121,7 +121,10 @@ pub(crate) struct WindowsMut<'a, T, const SIZE: usize> {
 }
 
 impl<'a, T, const SIZE: usize> LendingIterator for WindowsMut<'a, T, SIZE> {
-    type Item<'this> = &'this mut [T; SIZE] where 'a: 'this;
+    type Item<'this>
+        = &'this mut [T; SIZE]
+    where
+        'a: 'this;
 
     fn next(&mut self) -> Option<Self::Item<'_>> {
         let result = self
